@@ -1,0 +1,12 @@
+<apex:page showHeader="false" sidebar="false" applyBodyTag="false" applyHtmlTag="false"  extensions="QuoteEdit1Contrl" standardController="cafsl__Oracle_Quote__c" action="{!initialize}">
+    <!-- Edit and View behave the same way (Edit mode) -->
+    <apex:outputPanel rendered="{!redirectPage == false}">
+        <script type="text/javascript">
+        //alert('{!alertMessage}');
+        window.alert('{!alertMessage}');
+        window.parent.location.href="/{!opp}";
+                        
+     </script>
+   </apex:outputPanel>
+    
+</apex:page>
