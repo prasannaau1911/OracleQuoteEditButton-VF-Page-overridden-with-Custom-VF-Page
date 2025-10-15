@@ -1,0 +1,49 @@
+public class QuoteEdit1Contrl {
+    public String alertMessage{get; set;}
+    Public Boolean redirectPage{get;set;}
+    Public Id opp{get;set;}
+    public QuoteEdit1Contrl(ApexPages.StandardController stdController){
+        alertMessage='Error!!';
+        System.debug('Current page id: '+ApexPages.currentPage().getParameters());
+    }
+
+/*public PageReference redirectToCPQ() {
+        // Get the Quote ID from the URL parameter
+        Id quoteId = ApexPages.currentPage().getParameters().get('id');
+    
+        // Construct the CPQ Quote Line Editor URL
+        String cpqUrl = '/lightning/r/cafsl__Oracle_Quote__c/a7yBS0000001UiPYAU/edit';
+
+        // Redirect to the CPQ Quote Line Editor
+        return new PageReference(cpqUrl);
+    }*/
+
+    public PageReference initialize(){
+        
+        PageReference pageRef;
+        Id oracleQuoteId = ApexPages.currentPage().getParameters().get('id');
+        for(cafsl__Oracle_Quote__c Oq: [SELECT Id,cafsl__Opportunity__r.Id FROM cafsl__Oracle_Quote__c WHERE Id =:oracleQuoteId]){
+            opp = Oq.cafsl__Opportunity__r.Id;
+            System.debug('opp: '+opp);
+        }
+        List<Opportunity> oppval = [SELECT Id,RecordType.Name,StageName FROM Opportunity WHERE Id =:opp and  RecordType.Name ='New Opportunity' and StageName IN ('Won' ,'Lost', 'Implement')];
+        if(!oppval.isEmpty()){
+            redirectPage=false;
+            System.debug('Having opportunity');
+            return null;
+        }else{
+        redirectPage = true;
+        pageRef = new PageReference('/apex/cafsl__OracleQuoteEdit');
+        pageRef.getParameters().put('id', oracleQuoteId);
+        pageRef.setRedirect(true);
+        System.debug('pageRef: '+pageRef);
+        System.debug('Current page id: '+ApexPages.currentPage().getParameters());
+        return pageRef;
+        }
+        
+        
+        
+         
+    }
+
+}
